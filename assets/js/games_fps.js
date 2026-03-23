@@ -96,6 +96,7 @@ const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xdede8d });
 const spheres = [];
 let sphereIdx = 0;
 
+
 for (let i = 0; i < NUM_SPHERES; i++) {
 
     const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -125,6 +126,13 @@ let mouseTime = 0;
 const keyStates = {};
 let cameraYaw = 0;
 let cameraPitch = 0;
+
+let vidas = 3;
+let puntos = 0;
+let gameOver = false;
+
+const objetos = []; // recolectables
+
 
 // 🎭 PERSONAJE MIXAMO
 let character;
@@ -389,6 +397,24 @@ function updateSpheres(deltaTime) {
 
         playerSphereCollision(sphere);
 
+        // 💀 DAÑO AL JUGADOR
+const distancia = sphere.collider.center.distanceTo(playerCollider.end);
+
+if (distancia < 1.2) {
+
+    vidas--;
+
+    console.log("💔 Vida:", vidas);
+
+    // empuje
+    playerVelocity.y = 10;
+
+    if (vidas <= 0) {
+        gameOver = true;
+        alert("GAME OVER");
+    }
+}
+
     });
 
     spheresCollisions();
@@ -574,6 +600,23 @@ modelo.scale.setScalar(escala);
             }
         }
     });
+    // 🪅 OBJETOS PARA RECOLECTAR
+for (let i = 0; i < 15; i++) {
+
+    const obj = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0xff00ff })
+    );
+
+    obj.position.set(
+        Math.random() * 20 - 10,
+        1,
+        Math.random() * 20 - 10
+    );
+
+    scene.add(obj);
+    objetos.push(obj);
+}
 
 }, undefined, (error) => {
     console.error("ERROR AL CARGAR ❌", error);
@@ -599,6 +642,7 @@ function teleportPlayerIfOob() {
 
 
 function animate() {
+    if (gameOver) return;
 
     timer.update();
 
@@ -615,6 +659,25 @@ function animate() {
     teleportPlayerIfOob();
 
     if (mixer) mixer.update(deltaTime); // 🔥 AQUÍ VA
+
+    // 🪅 RECOLECCIÓN
+for (let i = objetos.length - 1; i >= 0; i--) {
+
+    // 🖥️ ACTUALIZAR UI
+ui.innerHTML = `❤️ Vidas: ${vidas} <br> ⭐ Puntos: ${puntos}`;
+
+    const obj = objetos[i];
+
+    const distancia = obj.position.distanceTo(playerCollider.end);
+
+    if (distancia < 1.5) {
+
+        scene.remove(obj);
+        objetos.splice(i, 1);
+
+        puntos++;
+    }
+}
 }
 
     renderer.render(scene, camera);
@@ -623,3 +686,11 @@ function animate() {
 
 }
 
+const ui = document.createElement('div');
+ui.style.position = 'absolute';
+ui.style.top = '20px';
+ui.style.left = '20px';
+ui.style.color = 'white';
+ui.style.fontSize = '20px';
+
+document.body.appendChild(ui);
