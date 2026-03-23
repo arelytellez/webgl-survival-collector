@@ -1,0 +1,170 @@
+/* fondo general */
+
+body {
+
+    background: #050816;
+
+    color: white;
+
+    font-family: Segoe UI;
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* grid futurista */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    width: 100%;
+
+    height: 100%;
+
+    background-image:
+
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+
+    background-size: 60px 60px;
+
+    z-index: -1;
+
+}
+
+
+/* navbar */
+
+.navbar {
+
+    background: transparent;
+
+    padding: 20px;
+
+}
+
+
+/* hero */
+
+.hero {
+
+    padding: 100px 20px;
+
+}
+
+
+/* titulo */
+
+.titulo {
+
+    font-size: 3.5rem;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* texto verde */
+
+.verde {
+
+    color: #22c55e;
+
+}
+
+
+/* descripcion */
+
+.descripcion {
+
+    font-size: 18px;
+
+    opacity: 0.8;
+
+    line-height: 1.7;
+
+    margin-bottom: 35px;
+
+}
+
+
+/* boton */
+
+.btn-demo {
+
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+
+    padding: 15px 35px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    color: white;
+
+    font-weight: 600;
+
+    font-size: 18px;
+
+    transition: 0.3s;
+
+    display: inline-block;
+
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+
+}
+
+.btn-demo:hover {
+
+    transform: scale(1.05);
+
+    box-shadow: 0 15px 35px rgba(34, 197, 94, 0.6);
+
+}
+
+
+/* imagen */
+
+.imagen-demo {
+
+    width: 95%;
+
+    max-width: 520px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+
+}
+
+
+/* footer */
+
+footer {
+
+    margin-top: auto;
+
+    text-align: center;
+
+    padding: 20px;
+
+    font-size: 14px;
+
+    opacity: 0.7;
+
+}
