@@ -86,32 +86,40 @@ container.appendChild(stats.domElement);
 const GRAVITY = 30;
 
 const NUM_SPHERES = 100;
-const SPHERE_RADIUS = 0.2;
+const SPHERE_RADIUS = 0.5;
 
 const STEPS_PER_FRAME = 5;
 
 const sphereGeometry = new THREE.IcosahedronGeometry(SPHERE_RADIUS, 5);
-const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xdede8d });
+//const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xdede8d });
+const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
 const spheres = [];
 let sphereIdx = 0;
 
 
-for (let i = 0; i < NUM_SPHERES; i++) {
+/*for (let i = 0; i < NUM_SPHERES; i++) {
 
     const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
     sphere.castShadow = true;
     sphere.receiveShadow = true;
 
+    // 🔥 POSICIÓN ALEATORIA EN EL MAPA
+    const x = Math.random() * 20 - 10;
+    const z = Math.random() * 20 - 10;
+    const y = 2; // altura inicial
+
+    sphere.position.set(x, y, z);
+
     scene.add(sphere);
 
     spheres.push({
         mesh: sphere,
-        collider: new THREE.Sphere(new THREE.Vector3(0, - 100, 0), SPHERE_RADIUS),
+        collider: new THREE.Sphere(new THREE.Vector3(x, y, z), SPHERE_RADIUS),
         velocity: new THREE.Vector3()
     });
 
-}
+}*/
 
 const worldOctree = new Octree();
 
@@ -130,6 +138,9 @@ let cameraPitch = 0;
 let vidas = 3;
 let puntos = 0;
 let gameOver = false;
+let tiempoDaño = 0;
+let nivel = 1;
+let buenasRestantes = 0;
 
 const objetos = []; // recolectables
 
@@ -165,7 +176,16 @@ document.addEventListener('keyup', (event) => {
 
 });
 
+/*container.addEventListener('mousedown', () => {
+
+    document.body.requestPointerLock();
+
+    mouseTime = performance.now();
+
+});*/
 container.addEventListener('mousedown', () => {
+
+    if (gameOver) return; // 🚫 NO hacer nada si ya perdiste
 
     document.body.requestPointerLock();
 
@@ -173,7 +193,14 @@ container.addEventListener('mousedown', () => {
 
 });
 
+/*document.addEventListener('mouseup', () => {
+
+    if (document.pointerLockElement !== null) throwBall();
+
+});*/
 document.addEventListener('mouseup', () => {
+
+    if (gameOver) return; // 🚫 evitar acciones
 
     if (document.pointerLockElement !== null) throwBall();
 
@@ -400,18 +427,19 @@ function updateSpheres(deltaTime) {
         // 💀 DAÑO AL JUGADOR
 const distancia = sphere.collider.center.distanceTo(playerCollider.end);
 
-if (distancia < 1.2) {
+let tiempoDaño = 0;
+if (distancia < 1.2 && tiempoDaño <= 0) {
 
     vidas--;
+    tiempoDaño = 1; // 🔥 1 segundo de protección
 
     console.log("💔 Vida:", vidas);
 
-    // empuje
     playerVelocity.y = 10;
 
     if (vidas <= 0) {
         gameOver = true;
-        alert("GAME OVER");
+        mostrarGameOver();
     }
 }
 
@@ -560,6 +588,8 @@ loader.load('scene.gltf', (gltf) => {
     // 🔍 MEDIR
     const box = new THREE.Box3().setFromObject(modelo);
     const size = box.getSize(new THREE.Vector3());
+    const min = box.min;
+const max = box.max;
 
     console.log("Tamaño del modelo:", size);
 
@@ -601,7 +631,7 @@ modelo.scale.setScalar(escala);
         }
     });
     // 🪅 OBJETOS PARA RECOLECTAR
-for (let i = 0; i < 15; i++) {
+/*for (let i = 0; i < 15; i++) {
 
     const obj = new THREE.Mesh(
         new THREE.SphereGeometry(0.5, 16, 16),
@@ -618,6 +648,24 @@ for (let i = 0; i < 15; i++) {
     objetos.push(obj);
 }
 
+// 🪅 OBJETOS PARA RECOLECTAR
+for (let i = 0; i < 15; i++) {
+
+    const obj = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0xff00ff })
+    );
+
+    obj.position.set(
+        Math.random() * 20 - 10,
+        1,
+        Math.random() * 20 - 10
+    );
+
+    scene.add(obj);
+    objetos.push(obj);
+}*/
+generarRonda();
 }, undefined, (error) => {
     console.error("ERROR AL CARGAR ❌", error);
 });
@@ -672,11 +720,18 @@ ui.innerHTML = `❤️ Vidas: ${vidas} <br> ⭐ Puntos: ${puntos}`;
 
     if (distancia < 1.5) {
 
-        scene.remove(obj);
-        objetos.splice(i, 1);
+    scene.remove(obj);
+    objetos.splice(i, 1);
 
-        puntos++;
+    puntos++;
+    buenasRestantes--;
+
+    // 🚀 CAMBIO DE NIVEL
+    if (buenasRestantes <= 0) {
+        nivel++;
+        generarRonda();
     }
+}
 }
 }
 
@@ -694,3 +749,197 @@ ui.style.color = 'white';
 ui.style.fontSize = '20px';
 
 document.body.appendChild(ui);
+
+function mostrarGameOver() {
+
+    // 🧱 CONTENEDOR PRINCIPAL
+    const overlay = document.createElement('div');
+    overlay.id = "gameOverOverlay";
+
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.7)';
+    overlay.style.display = 'flex';
+    overlay.style.flexDirection = 'column';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.zIndex = '999';
+
+    // 🏷️ TEXTO GAME OVER
+    const title = document.createElement('div');
+    title.innerHTML = "💀 GAME OVER";
+    title.style.color = 'white';
+    title.style.fontSize = '60px';
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '20px';
+    title.style.textShadow = '0 0 20px red';
+
+    // 📊 PUNTOS
+    const score = document.createElement('div');
+    score.innerHTML = `⭐ Puntos: ${puntos}`;
+    score.style.color = 'white';
+    score.style.fontSize = '30px';
+    score.style.marginBottom = '30px';
+
+    // 🔘 BOTÓN REINICIAR
+    const button = document.createElement('button');
+    button.innerHTML = "🔄 Reiniciar Juego";
+
+    button.style.padding = '15px 30px';
+    button.style.fontSize = '20px';
+    button.style.border = 'none';
+    button.style.borderRadius = '10px';
+    button.style.cursor = 'pointer';
+    button.style.background = '#ff4444';
+    button.style.color = 'white';
+    button.style.transition = '0.3s';
+
+    // 🎨 efecto hover
+    button.onmouseover = () => button.style.background = '#ff0000';
+    button.onmouseout = () => button.style.background = '#ff4444';
+
+    // 🔄 acción reiniciar
+    button.onclick = () => reiniciarJuego();
+
+    // 📦 agregar todo
+    overlay.appendChild(title);
+    overlay.appendChild(score);
+    overlay.appendChild(button);
+
+    document.body.appendChild(overlay);
+}
+
+function posicionAleatoriaDentroMapa() {
+
+    if (!mapMin || !mapMax) return new THREE.Vector3(0, 2, 0);
+
+    const x = Math.random() * (mapMax.x - mapMin.x) + mapMin.x;
+    const z = Math.random() * (mapMax.z - mapMin.z) + mapMin.z;
+    const y = mapMax.y; // arriba del mapa
+
+    return new THREE.Vector3(x, y, z);
+}
+
+function generarRonda() {
+
+    // 🧹 1. LIMPIAR TODO LO ANTERIOR
+    objetos.forEach(obj => scene.remove(obj));
+    objetos.length = 0;
+
+    spheres.forEach(s => scene.remove(s.mesh));
+    spheres.length = 0;
+
+    // 📈 2. CALCULAR CANTIDAD
+    const buenas = nivel * 3 - 1; // 2,5,8...
+    const malas = nivel;         // 1,2,3...
+
+    buenasRestantes = buenas;
+
+    console.log("Nivel:", nivel);
+
+    // 🟣 3. CREAR BUENAS
+    for (let i = 0; i < buenas; i++) {
+
+        const obj = new THREE.Mesh(
+            new THREE.SphereGeometry(0.5, 16, 16),
+            new THREE.MeshStandardMaterial({ color: 0xff00ff })
+        );
+
+        obj.position.set(
+            Math.random() * 20 - 10,
+            1,
+            Math.random() * 20 - 10
+        );
+
+        scene.add(obj);
+        objetos.push(obj);
+    }
+
+    // 🔴 4. CREAR MALAS
+    for (let i = 0; i < malas; i++) {
+
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+        const x = Math.random() * 20 - 10;
+        const z = Math.random() * 20 - 10;
+        const y = 2;
+
+        sphere.position.set(x, y, z);
+
+        scene.add(sphere);
+
+        spheres.push({
+            mesh: sphere,
+            collider: new THREE.Sphere(new THREE.Vector3(x, y, z), SPHERE_RADIUS),
+            velocity: new THREE.Vector3()
+        });
+    }
+}
+
+function reiniciarJuego() {
+
+    // 🔄 reset variables
+    vidas = 3;
+    puntos = 0;
+    gameOver = false;
+
+    // 🧹 eliminar overlay
+    const overlay = document.getElementById("gameOverOverlay");
+    if (overlay) overlay.remove();
+
+    // 🎮 reset jugador
+    playerCollider.start.set(0, 1, 0);
+    playerCollider.end.set(0, 2, 0);
+    playerVelocity.set(0, 0, 0);
+
+    // 🔄 limpiar objetos
+    objetos.forEach(obj => scene.remove(obj));
+    objetos.length = 0;
+
+    // 🔄 limpiar esferas
+    spheres.forEach(s => scene.remove(s.mesh));
+    spheres.length = 0;
+
+    // 🚀 volver a generar (puedes mejorar esto luego con rondas)
+    generarEscenaInicial();
+}
+
+function generarEscenaInicial() {
+
+    // 🪅 OBJETOS BUENOS
+    for (let i = 0; i < 5; i++) {
+
+        const obj = new THREE.Mesh(
+            new THREE.SphereGeometry(0.5, 16, 16),
+            new THREE.MeshStandardMaterial({ color: 0xff00ff })
+        );
+
+        const pos = posicionAleatoriaDentroMapa();
+        obj.position.copy(pos);
+        obj.position.y = 1;
+
+        scene.add(obj);
+        objetos.push(obj);
+    }
+
+    // 🔴 ESFERAS MALAS
+    for (let i = 0; i < 2; i++) {
+
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+        const pos = posicionAleatoriaDentroMapa();
+        sphere.position.copy(pos);
+        sphere.position.y = 2;
+
+        scene.add(sphere);
+
+        spheres.push({
+            mesh: sphere,
+            collider: new THREE.Sphere(sphere.position.clone(), SPHERE_RADIUS),
+            velocity: new THREE.Vector3()
+        });
+    }
+}

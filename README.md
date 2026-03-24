@@ -30,7 +30,28 @@ La aplicación está desarrollada como una demostración de interacción en ambi
 
 ---
 
----
+## 📂 Estructura del proyecto
+
+```
+project
+│
+├── index.html
+├── octree_demo.html
+│
+├── assets
+│   ├── css
+│   │   └── index.css
+│   │
+│   ├── img
+│   │   └── octree.png
+│   │
+│   └── js
+│       └── octree.js
+│
+└── README.md
+```
+
+
 4. Presionar el botón **"Ejecutar demo"** para acceder al entorno 3D.
 
 ---
@@ -43,6 +64,8 @@ La aplicación está desarrollada como una demostración de interacción en ambi
 | S       | Retroceder           |
 | A       | Mover a la izquierda |
 | D       | Mover a la derecha   |
+| F       | Ataque               |
+| Space   | Salto                |
 | Mouse   | Girar la cámara      |
 | Click   | Interactuar          |
 
@@ -56,9 +79,9 @@ La aplicación permite explorar un entorno 3D con perspectiva en primera persona
 
 ## 👩‍💻 Autor
 
-**Arely Telles Salas N.C 22200791**
-Tecnológico Nacional de México Campus Pachuca 
-Ingeniería en Tecnologías de la Información y Comunicaciones
+**Arely Telles Salas**
+Tecnológico Nacional de México
+Ingeniería en Sistemas Computacionales
 
 ---
 
@@ -75,3 +98,4 @@ con el objetivo de comprender el funcionamiento de:
 * optimización espacial mediante Octree
 
 ---
+
