@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Entorno 3D Interactivo</title>
+    <title>Juego 3D Interactivo</title>
 
     <link rel="icon" href="assets/img/control.png">
 
@@ -17,17 +17,17 @@
 
 </head>
 
-<body>
+<body style="background:#0f0f0f; color:white;">
 
 
     <!-- NAVBAR -->
 
-    <nav class="navbar navbar-dark">
+    <nav class="navbar navbar-dark bg-dark">
 
         <div class="container">
 
             <a class="navbar-brand fw-bold" href="#">
-                🎮 Entorno 3D
+                🎮 Juego 3D Interactivo
             </a>
 
         </div>
@@ -37,7 +37,7 @@
 
     <!-- HERO -->
 
-    <section class="hero">
+    <section class="hero py-5">
 
         <div class="container">
 
@@ -49,29 +49,36 @@
 
                     <h1 class="titulo">
 
-                        Explora un entorno <br>
+                        Sobrevive y explora en un <br>
 
-                        <span class="verde">3D interactivo</span>
+                        <span style="color:#00ffcc;">mundo 3D interactivo</span>
 
                     </h1>
 
 
                     <p class="descripcion">
 
-                        Esta aplicación permite navegar dentro de un escenario tridimensional
-                        utilizando controles FPS y detección de colisiones mediante Octree.
+                        Este juego consiste en controlar un personaje dentro de un entorno tridimensional,
+                        donde deberás recolectar esferas para obtener puntos mientras evitas las esferas
+                        enemigas que pueden quitarte vidas.
 
                         <br><br>
 
-                        Desarrollado con <b>Three.js</b> para simular interacción física
-                        en tiempo real.
+                        A medida que avanzas, el nivel aumenta y aparecen más objetos, haciendo el juego
+                        más desafiante. El sistema incluye físicas reales, colisiones y animaciones
+                        dinámicas en tiempo real.
+
+                        <br><br>
+
+                        Desarrollado con <b>Three.js</b>, utilizando detección de colisiones con <b>Octree</b>
+                        y control de cámara tipo videojuego.
 
                     </p>
 
 
-                    <a href="octree_demo.html" class="btn-demo">
+                    <a href="octree_demo.html" class="btn btn-success btn-lg mt-3">
 
-                        Ejecutar demo
+                        ▶️ Jugar ahora
 
                     </a>
 
@@ -83,7 +90,7 @@
 
                 <div class="col-lg-6 text-center">
 
-                    <img src="assets/img/octree.png" class="imagen-demo">
+                    <img src="assets/img/octree.png" class="img-fluid">
 
                 </div>
 
@@ -94,12 +101,103 @@
     </section>
 
 
+    <!-- CONTROLES -->
+
+    <section class="controles py-5">
+
+        <div class="container">
+
+            <h2 class="text-center mb-5">🕹️ Controles del Juego</h2>
+
+            <div class="row g-4">
+
+                <!-- MOVIMIENTO -->
+                <div class="col-md-6">
+
+                    <div class="p-4 shadow rounded h-100" style="background:#1e1e1e; color:white;">
+
+                        <h5 class="mb-3">Movimiento del personaje</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li><b>W</b> — Avanzar</li>
+                            <li><b>S</b> — Retroceder</li>
+                            <li><b>A</b> — Desplazarse a la izquierda</li>
+                            <li><b>D</b> — Desplazarse a la derecha</li>
+                            <li><b>Espacio</b> — Saltar</li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+                <!-- CÁMARA -->
+                <div class="col-md-6">
+
+                    <div class="p-4 shadow rounded h-100" style="background:#1e1e1e; color:white;">
+
+                        <h5 class="mb-3">Cámara y acciones</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li><b>Mouse</b> — Control de cámara</li>
+                            <li><b>Click izquierdo</b> — Activar cámara</li>
+                            <li><b>Click sostenido</b> — Lanzar esfera</li>
+                            <li><b>F</b> — Ataque</li>
+                            <li><b>← →</b> — Ajuste de cámara</li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- OBJETIVO -->
+
+    <section class="objetivo py-5 text-center">
+
+        <div class="container">
+
+            <h2 class="mb-4">🎯 Objetivo del Juego</h2>
+
+            <p class="lead">
+
+                El objetivo principal es controlar al personaje dentro del entorno 3D para recolectar
+                la mayor cantidad de esferas posibles y acumular puntos.
+
+            </p>
+
+            <p>
+
+                A lo largo del juego, aparecerán esferas enemigas que representan un riesgo,
+                ya que al entrar en contacto con ellas el jugador perderá vidas.
+
+                <br><br>
+
+                Conforme se completan las recolecciones, el nivel de dificultad incrementa,
+                generando una mayor cantidad de objetos y desafiando la habilidad del jugador.
+
+                <br><br>
+
+                El juego finaliza cuando el jugador pierde todas sus vidas.
+
+            </p>
+
+        </div>
+
+    </section>
+
+
     <!-- FOOTER -->
 
-    <footer>
+    <footer class="text-center py-3 bg-dark">
 
         <p>
-            Desarrollado por Arely Telles Salas
+            Desarrollado por Arely Téllez Salas
         </p>
 
         <p>
